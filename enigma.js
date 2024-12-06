@@ -12,20 +12,26 @@ function getChoice() {
   const message = [
     'You can either decrypt or encrypt a script based on the KEY.',
     'Select an option : \n 1. Encrypt\n 2. Decrypt'];
-  const selectedChoice = +prompt(message.join('\n'));
+  const option = +prompt(message.join('\n'));
 
   clearScreen();
 
-  if (selectedChoice === 1) {
+  if (option !== 1 && option !== 2) {
+    console.log('Indvalid option..🙂');
+    getChoice();
+  }
+
+  return option;
+}
+
+function getEncryptOrDecrypt() {
+  const choice = getChoice();
+
+  if (choice === 1) {
     return 'encrypt';
   }
 
-  if (selectedChoice === 2) {
-    return 'decrypt';
-  }
-  console.log('Select a Valid option..🙂');
-
-  return getChoice();
+  return 'decrypt';
 }
 
 function areSameCharsFound(character, key, index) {
@@ -206,7 +212,7 @@ function displayProcessResult(encryptOrDecrypt, convertedText) {
 function cryptographicTransform() {
   clearScreen();
 
-  const encryptOrDecrypt = getChoice();
+  const encryptOrDecrypt = getEncryptOrDecrypt();
   const text = getTextToEncryptDecrypt(encryptOrDecrypt);
   const key = getKey(text, encryptOrDecrypt);
   const convertedText = convertText(key, text);

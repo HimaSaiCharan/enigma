@@ -7,19 +7,22 @@ function clearScreen() {
   console.clear();
 }
 
-function getChoise() {
+function getChoice() {
   const message = "This is a Enigma Machine. You can either decrypt or encrypt a script based on the KEY.\nSelect an option : \n\n 1. Encrypt\n 2. Decrypt";
-  const selectedChoise = +prompt(message);
+  const selectedChoice = +prompt(message);
 
   clearScreen();
 
-  if (selectedChoise === 1 || selectedChoise === 2) {
-    return selectedChoise;
+  if (selectedChoice === 1) {
+    return 'encrypt';
   }
 
+  if (selectedChoice === 2) {
+    return 'decrypt';
+  }
   console.log('Select a Valid option..🙂');
 
-  return getChoise();
+  return getChoice();
 }
 
 function areSameCharsFound(character, key, index) {
@@ -41,27 +44,27 @@ function isCharacterEncrypted(character, key) {
   return false;
 }
 
-function getRandomNoBetween(to, from) {
+function getRandomNumBetween(to, from) {
   return from + Math.ceil(Math.random() * (to - from));
 }
 
 function getRandomCharFromString(string) {
-  return string[getRandomNoBetween(0, string.length - 1)];
+  return string[getRandomNumBetween(0, string.length - 1)];
 }
 
 function getRandomChar() {
-  const randomNumberForChar = getRandomNoBetween(0, 4);
+  const randomNumberForChar = getRandomNumBetween(0, 4);
 
   switch (randomNumberForChar) {
     case 1:
-      return getRandomChar(SMALL_CASE_ALPHABETS);
+      return getRandomCharFromString(SMALL_CASE_ALPHABETS);
     case 2:
       return getRandomCharFromString(BIG_CASE_ALPHABETS);
     case 3:
       return getRandomCharFromString(NUMBERS);
-    }
+  }
 
-    return getRandomCharFromString(SYMBOLS);
+  return getRandomCharFromString(SYMBOLS);
 }
 
 function isEncryptedCharUsed(character, key) {
@@ -87,9 +90,7 @@ function getEncryptedCharacter(character, key) {
 function getKeyFromComputer(text) {
   let key = '';
 
-  for (let index = 0; index < text.length; index++) {
-    const character = text[index];
-
+  for (const character of text) {
     if (!isCharacterEncrypted(character, key)) {
       key += character + getEncryptedCharacter(character, key);
     }
@@ -99,7 +100,7 @@ function getKeyFromComputer(text) {
   return key;
 }
 
-function getReplacementForChar(character, key) {
+function replace(character, key) {
   for (let index = 0; index < key.length; index += 2) {
     if (character === key[index]) {
       return key[index + 1];
@@ -112,8 +113,8 @@ function getReplacementForChar(character, key) {
 function convertText(key, text) {
   let convertedText = '';
 
-  for (let index = 0; index < text.length; index++) {
-    convertedText += getReplacementForChar(text[index], key);
+  for (const character of text) {
+    convertedText += replace(character, key);
   }
 
   return convertedText;
@@ -148,9 +149,9 @@ function getKeyFromUser(text) {
 }
 
 function getKeyToEncrypt(text) {
-  const keyChoise = +prompt('\n\nSelect an option for the KEY : \n\n 1.User had a KEY\n 2.Let Computer generate a KEY');
+  const keyChoice = +prompt('\n\nSelect an option for the KEY : \n\n 1.User had a KEY\n 2.Let Computer generate a KEY');
 
-  if (keyChoise !== 1 && keyChoise !== 2) {
+  if (keyChoice !== 1 && keyChoice !== 2) {
     clearScreen();
 
     console.log('Enter a Valid option..🙂 ');
@@ -158,7 +159,7 @@ function getKeyToEncrypt(text) {
     return getKeyToEncrypt(text);
   }
 
-  const key = keyChoise === 1 ? getKeyFromUser(text) : getKeyFromComputer(text);
+  const key = keyChoice === 1 ? getKeyFromUser(text) : getKeyFromComputer(text);
 
   return key;
 }
@@ -181,39 +182,28 @@ function getKey(text, processType) {
   }
 }
 
-function processToPerform(processType) {
-  const TEXT = prompt('Enter / Paste text here that you want to ' + processType + ' :');
+function process(processType) {
+  const text = prompt('Enter / Paste text here that you want to ' + processType + ' :');
 
-  if (TEXT === '') {
+  if (text === '') {
     clearScreen();
     console.log('ANYTHING is better than NOTHING. Please enter any text..🙂 \n');
 
-    return processToPerform(processType);
+    return process(processType);
   }
 
-  const KEY = getKey(TEXT, processType);
-  const CONVERTED_TEXT = convertText(KEY, TEXT);
+  const KEY = getKey(text, processType);
+  const convertedText = convertText(KEY, text);
 
-  console.log("\nThe " + processType + "ed text :", CONVERTED_TEXT, "\n\n\n\n");
+  console.log("\nThe " + processType + "ed text :", convertedText, "\n\n\n\n");
 
-  return CONVERTED_TEXT;
+  return convertedText;
 }
 
-function encryptOrDectypt() {
-  console.clear();
+function cryptographicTransform() {
+  clearScreen();
 
-  const userChoise = getChoise();
-  let encryptedOrDectyptedText = '';
-
-  if (userChoise === 1) {
-    encryptedOrDectyptedText = processToPerform('encrypt');
-  }
-
-  if (userChoise === 2) {
-    encryptedOrDectyptedText = processToPerform('decrypt');
-  }
-
-  return encryptedOrDectyptedText;
+  return process(getChoice());
 }
 
-encryptOrDectypt();
+cryptographicTransform();

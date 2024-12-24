@@ -4,15 +4,18 @@ const NUMBERS = '1234567890';
 const SYMBOLS = '`~!@#$%^&*()_+-=[]\ {}|;:",./<>?\'';
 const ALL_CHARACTERS = [SMALL_CASE_ALPHABETS, BIG_CASE_ALPHABETS, NUMBERS, SYMBOLS];
 
-function clearScreen() {
-  console.clear();
-}
+const getInput = (message) => prompt(message.join('\n'));
 
-function getChoice() {
+const clearScreen = function () {
+  console.clear();
+};
+
+const getChoice = function () {
   const message = [
     'You can either decrypt or encrypt a script based on the KEY.',
-    'Select an option : \n 1. Encrypt\n 2. Decrypt'];
-  const option = +prompt(message.join('\n'));
+    'Select an option : \n 1. Encrypt\n 2. Decrypt'
+  ];
+  const option = +getInput(message);
 
   clearScreen();
 
@@ -22,7 +25,7 @@ function getChoice() {
   }
 
   return option;
-}
+};
 
 function getEncryptOrDecrypt() {
   const choice = getChoice();
@@ -45,12 +48,7 @@ function areSameCharsFound(character, key, index) {
 }
 
 function isCharacterEncrypted(character, key) {
-  for (let index = 0; index < key.length; index += 2) {
-    if (character === key[index])
-      return true;
-  }
-
-  return false;
+  return areSameCharsFound(character, key, 0);
 }
 
 function getRandomNumBetween(to, from) {
@@ -130,17 +128,14 @@ function isKeyValid(key) {
 
 function getKeyFromUser(text) {
   const message = [
-    "The KEY should follow this format.",
-    " ╭╮╭╮╭╮╭╮╭╮╭╮\n Tih&i@n g-s;",
-    "The KEY should consist of the character followed by to which it should be converted",
+    "The KEY should follow this format.The character followed by to which it is encrypted as",
+    " ╭╮╭╮╭╮╭╮╭╮╭╮\n Tih&i@n g-s; \n",
+    "Enter / Paste the KEY here : "
   ];
-
-  console.log(message.join("\n\n"));
-
-  const key = prompt("\nEnter / Paste the KEY here :");
+  const key = getInput(message);
 
   if (!isKeyValid(key)) {
-    return getKeyFromUser(text);
+    getKeyFromUser(text);
   }
 
   return key;
@@ -151,12 +146,12 @@ function getKeyGenerationOption() {
     'Select an option for the KEY : \n',
     ' 1.User had a KEY\n 2.Let Computer generate a KEY'
   ];
-  const option = +prompt(message.join('\n'));
+  const option = +getInput(message);
 
   if (option !== 1 && option !== 2) {
     clearScreen();
     console.log('Enter a Valid option..🙂 ');
-    return getKeyGenerationOption();
+    getKeyGenerationOption();
   }
 
   return option;
@@ -174,12 +169,8 @@ function getKeyToEncrypt(text) {
   return key;
 }
 
-function reverse(index, string) {
-  if (index === string.length - 1) {
-    return string[index];
-  }
-
-  return reverse(index + 1, string) + string[index];
+function reverse(string) {
+  return string.split('').reverse().join('');
 }
 
 function getKey(text, encryptOrDecrypt) {
@@ -188,18 +179,19 @@ function getKey(text, encryptOrDecrypt) {
   }
 
   if (encryptOrDecrypt === 'decrypt') {
-    return reverse(0, getKeyFromUser(text));
+    return reverse(getKeyFromUser(text));
   }
 }
 
 function getTextToEncryptDecrypt(encryptOrDecrypt) {
-  const text = prompt('Enter / Paste text here that you want to ' + encryptOrDecrypt + ' :');
+  const message = ['Enter / Paste text here that you want to ' + encryptOrDecrypt + ' :'];
+  const text = getInput(message);
 
   if (text === '') {
     clearScreen();
     console.log('ANYTHING is better than NOTHING. Please enter any text..🙂 \n');
 
-    return getTextToEncryptDecrypt(encryptOrDecrypt);
+    getTextToEncryptDecrypt(encryptOrDecrypt);
   }
 
   return text;
